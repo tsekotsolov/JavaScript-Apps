@@ -2,6 +2,7 @@ function loadRepos() {
     $('#repos').empty();
 
     $.ajax({
+        method:'GET',
         url: "https://api.github.com/users/" + $("#username").val() + "/repos",
         success: displayRepos,
         error: displayError
