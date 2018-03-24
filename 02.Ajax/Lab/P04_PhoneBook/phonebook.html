@@ -3,21 +3,56 @@
 
 <head>
     <meta charset="UTF-8">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
+
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <link rel="stylesheet" href="style.css">
     <title>Phonebook</title>
 </head>
 
 <body>
-    <h1>Phonebook</h1>
-    <ul id="phonebook"></ul>
-    <button id="btnLoad">Load</button>
-    <h2>Create Contact</h2>
-    Person:
-    <input type="text" id="person" />
-    <br> Phone:
-    <input type="text" id="phone" />
-    <br>
-    <button id="btnCreate">Create</button>
+
+    <div class="container">
+        <div class="rel">
+            <h2>
+                Phonebook
+            </h2>
+            <ul id="phonebook"></ul>
+            <button id="btnLoad">Load</button>
+
+        </div>
+
+        <h2>
+            Create Contact
+        </h2>
+        <div class="flex">
+
+
+            <div class="rel">
+                <input type="text" class="effect-1" id="person" placeholder="Person" />
+                <span class="focus-border"></span>
+            </div>
+
+            <div class="rel">
+                <input type="text" class="effect-1" id="phone" placeholder="Phone" />
+                <span class="focus-border"></span>
+
+            </div>
+
+            <div>
+
+                <button id="btnCreate">Create</button>
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+    
     <script src="phonebook.js"></script>
 </body>
 

@@ -1,0 +1,90 @@
+@import url('https://fonts.googleapis.com/css?family=Damion|Muli:400,600');
+
+body {
+  font-family: 'Muli', sans-serif;
+  background: url("./cable-call-communication-33999.jpg");
+  background-position: inherit;
+  background-size: cover;
+  background-repeat: no-repeat;
+  height: 100vh
+
+}
+
+h2 {
+  font-family: 'Damion', cursive;
+  font-weight: 400;
+  color: #fd4b49;
+  font-size: 35px;
+  text-align: center;
+  position: relative;
+  margin: 25px;
+}
+
+
+:focus {
+  outline: none;
+}
+
+ul{
+  list-style-type: none;
+ 
+}
+
+ul li a {
+  color: #fd4b49;
+}
+
+input[type="text"] {
+  font: 15px/24px 'Muli', sans-serif;
+  color: #333;
+  width: 100%;
+  box-sizing: border-box;
+  letter-spacing: 1px;
+}
+
+:focus {
+  outline: none;
+}
+
+.flex{
+  display:flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+input[type="text"] {
+  font: 15px/24px "Lato", Arial, sans-serif;
+  color: #333;
+  width: 100%;
+  box-sizing: border-box;
+  letter-spacing: 1px;
+}
+
+.rel{
+  position: relative;
+  margin: 0 auto;
+  text-align: center
+  
+}
+
+.effect-1
+ {
+  border: 0;
+  padding: 7px 0;
+  border-bottom: 1px solid #ccc;
+}
+
+.effect-1~.focus-border {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #fd4b49;
+  transition: 0.4s;
+}
+
+.effect-1:focus~.focus-border {
+  width: 100%;
+  transition: 0.4s;
+}
