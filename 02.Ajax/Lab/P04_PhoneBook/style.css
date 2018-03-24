@@ -44,9 +44,9 @@ input[type="text"] {
   letter-spacing: 1px;
 }
 
-::-webkit-input-placeholder { /* Chrome/Opera/Safari */
-  color: #fd4b49;
-  padding-left: 7px;
+input::placeholder {
+  color:#fd4b49;
+  padding: 7px;
 }
 
 :focus {
