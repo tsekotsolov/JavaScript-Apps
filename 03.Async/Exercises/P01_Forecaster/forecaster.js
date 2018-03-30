@@ -3,7 +3,7 @@ function attachEvents() {
     const forecastSection = $('#forecast');
     const currentDiv = $('#current');
     const upcomingDiv = $('#upcoming');
-    const errorDiv = $('<div class="error">ERROR</div>');
+    const location = $('#location');
     const weatherSymbols = {
         'Sunny': '&#x2600', // ☀
         'Partly sunny': '&#x26C5', // ⛅
@@ -11,8 +11,7 @@ function attachEvents() {
         'Rain': '&#x2614', // ☂
         'Degrees': '&#176' // °
     }
-
-    const location = $('#location');
+    
     $('#submit').click(getWeather);
 
     function getWeather() {
@@ -35,14 +34,13 @@ function attachEvents() {
                         url: url + `/forecast/today/${locationCode}.json `,
                         success: function (response) {
 
-
                             forecastSection.css('display', 'block');
 
                             let symbolSpan = $(`<span class="condition symbol">${weatherSymbols[response.forecast.condition]}</span>`);
 
                             let containerSpan = $('<span class="condition">')
                                 .append($(`<span class="forecast-data">${response.name}</span>`))
-                                .append($(`<span class="forecast-data">${response.forecast.high}${weatherSymbols['Degrees']}/${response.forecast.low}${weatherSymbols['Degrees']}</span>`))
+                                .append($(`<span class="forecast-data">${response.forecast.low}${weatherSymbols['Degrees']}/${response.forecast.high}${weatherSymbols['Degrees']}</span>`))
                                 .append($(`<span class="forecast-data">${response.forecast.condition}</span>`));
 
                             currentDiv.append(symbolSpan);
@@ -51,15 +49,15 @@ function attachEvents() {
                         error: errorHandler
                     });
 
-                    //UPCOMMING CONDITIONS 
+                    //UPCOMING CONDITIONS 
                     $.ajax({
                         method: 'GET',
                         url: url + `/forecast/upcoming/${locationCode}.json `,
                         success: function (response) {
 
-                            generateSpan(0);
-                            generateSpan(1);
-                            generateSpan(2);
+                            for (let i = 0; i < response.forecast.length; i++) {
+                                generateSpan(i);
+                            }
 
                             function generateSpan(index) {
                                 let upcomingSpan = $('<span class = "upcoming">')
