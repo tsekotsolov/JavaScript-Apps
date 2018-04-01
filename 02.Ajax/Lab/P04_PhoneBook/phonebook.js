@@ -51,7 +51,7 @@ function createData() {
 function generateListItem(name,phone,ID) {
 
   container.append($('<li>').text(`${name}: ${phone} `)
-    .append($('<a href ="#">').text('[Delete]')).click((e) => {
+    .append($('<a href ="#">').text('[Delete]').click((e) => {
       $.ajax({
         method: "DELETE",
         url: url + `/${ID}.json`,
@@ -60,7 +60,7 @@ function generateListItem(name,phone,ID) {
         },
         error: errorHandler
       })
-    }));
+    })));
 }
 
 function errorHandler(error) {
