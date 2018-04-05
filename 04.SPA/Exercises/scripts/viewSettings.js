@@ -13,7 +13,7 @@ function showHideMenuLinks() {
       $("#linkListAds").show()
       $("#linkCreateAd").show()
       $("#linkLogout").show()
-      $('#loggedInUser').text("Welcome, " + sessionStorage.getItem('username') + "!")
+      $('#loggedInUser').text("Welcome, " + sessionStorage.getItem('username') + "!").show();
   }
 }
 
