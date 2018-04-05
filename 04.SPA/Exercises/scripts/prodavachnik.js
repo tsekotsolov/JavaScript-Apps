@@ -87,8 +87,8 @@ function createAd() {
           'Authorization': 'Kinvey ' + sessionStorage.getItem('authToken')
         },
         data: {
-          title,
-          description,
+          title:escape(title),
+          description:escape(description),
           date,
           'price': Number(price),
           'publisher': sessionStorage.getItem('username')
