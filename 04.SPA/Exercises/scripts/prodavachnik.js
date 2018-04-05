@@ -117,6 +117,7 @@ function listAds() {
     }
   }).then(function (response) {
     if (response.length !== 0) {
+      infoBoxLoader("Ads listed")
       response.reverse();
       let tableHeader = $(`<tr>
     <th>Title</th>
@@ -218,12 +219,8 @@ function deleteAdd(add) {
       'Authorization': 'Kinvey ' + sessionStorage.getItem('authToken')
     }
   }).then(function (response) {
-
-    listAds();
     infoBoxLoader('Delete successful');
-    
-
-
+    listAds();
   }).catch(function (response) {
     handleAjaxError(response);
   })
@@ -232,7 +229,7 @@ function deleteAdd(add) {
 function infoBoxLoader(message) {
   let infobox = $('#infoBox')
   infobox.text(message);
-  infobox.css('display', 'block')
+  infobox.css('display', 'block');
   setTimeout(function () {
     infobox.css('display', 'none')
   }, 1500)
