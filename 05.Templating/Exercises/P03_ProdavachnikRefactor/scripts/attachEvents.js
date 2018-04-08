@@ -1,7 +1,7 @@
 function attachEvents() {
 
-  $('#linkRegister').click(async function () {
-   
+  $('#linkRegister').click(function () {
+
     let context = {
       viewType: 'viewRegister',
       headline: 'Please register here',
@@ -12,7 +12,7 @@ function attachEvents() {
 
 
     async function test(context) {
-      let source = await $.get('../details-template.html');
+      let source = await $.get('../templates/template.hbs')
       console.log(source);
       // let template = Handlebars.compile(source);
       // let instanceOfTemplate = template(context);
