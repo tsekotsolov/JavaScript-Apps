@@ -1,15 +1,16 @@
 function attachEvents() {
 
   async function test(context,url) {
-    let source = await $.get('../templates/register-login-template.hbs')
-    console.log(source);
-    // let template = Handlebars.compile(source);
-    // let instanceOfTemplate = template(context);
-    // $('main').append(instanceOfTemplate);
-
+    let source = await $.get(url);
+    
+    let template = Handlebars.compile(source);
+    let instanceOfTemplate = template(context);
+  
+    $('main').append(instanceOfTemplate);
+   
   };
 
-  $('#linkRegister').click(function () {
+  $('#linkRegister').click(async function () {
     
 let context = {
       viewType: 'viewRegister',
@@ -19,7 +20,7 @@ let context = {
       buttonText: 'Register'
     }
 
-    test(context,'../templates/register-login-template.hbs');
+    await test(context,'./templates/register-login-template.hbs');
     showView('viewRegister');
 
   });
