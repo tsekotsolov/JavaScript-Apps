@@ -1,8 +1,17 @@
 function attachEvents() {
 
-  $('#linkRegister').click(function () {
+  async function test(context,url) {
+    let source = await $.get('../templates/register-login-template.hbs')
+    console.log(source);
+    // let template = Handlebars.compile(source);
+    // let instanceOfTemplate = template(context);
+    // $('main').append(instanceOfTemplate);
 
-    let context = {
+  };
+
+  $('#linkRegister').click(function () {
+    
+let context = {
       viewType: 'viewRegister',
       headline: 'Please register here',
       formId: 'formRegister',
@@ -10,17 +19,7 @@ function attachEvents() {
       buttonText: 'Register'
     }
 
-
-    async function test(context) {
-      let source = await $.get('../templates/template.hbs')
-      console.log(source);
-      // let template = Handlebars.compile(source);
-      // let instanceOfTemplate = template(context);
-      // $('main').append(instanceOfTemplate);
-
-    };
-
-    test(context);
+    test(context,'../templates/register-login-template.hbs');
     showView('viewRegister');
 
   });
