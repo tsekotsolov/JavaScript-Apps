@@ -18,13 +18,13 @@ body{
 }
 
 #menu a {
-    display: none;
+    display: inline-block;
     text-decoration: none;
     padding: 5px 20px;
 }
 
 .menu-item {
-    display: none;
+    display: inline-block;
     text-decoration: none;
     padding: 5px 20px;
     color: #fff;
@@ -42,10 +42,14 @@ body{
 
 
 main > section {
-    display: none;
+    
     padding: 20px 5px;
 }
 
+.infoBoxes>section{
+    display: none;
+    padding: 20px 5px;
+}
 
 .title{
     text-align: center;

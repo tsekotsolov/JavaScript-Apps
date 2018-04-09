@@ -1,5 +1,6 @@
-function startApp() {
-    showHideMenuLinks();
-    showView('viewHome');
-    attachEvents();
+async function startApp() {
+   
+    loadHeader();
+    loadHome();
 }
+    

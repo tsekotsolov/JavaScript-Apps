@@ -26,8 +26,10 @@ function registerUser() {
 
     signInUser(response);
     infoBoxLoader('Registration Success');
+    loadHeader();
     $('#formRegister div:nth-child(2) input').val('');
     $('#formRegister div:nth-child(4) input').val('');
+    loadAllAds()
 
 
   }).catch(function (response) {
@@ -58,6 +60,8 @@ function loginUser() {
     signInUser(response);
     infoBoxLoader('Login Success');
     $('#formLogin').trigger('reset');
+    loadHeader();
+    loadAllAds();
 
 
   }).catch(function (response) {
@@ -71,15 +75,14 @@ function signInUser(response) {
   sessionStorage.setItem('username', response.username);
   sessionStorage.setItem('authToken', response._kmd.authtoken);
   sessionStorage.setItem('userId', response._id);
-  showHideMenuLinks();
-  showView('viewHome');
+
 }
 
 function logoutUser() {
   sessionStorage.clear();
-  showView('viewHome');
-  showHideMenuLinks();
   infoBoxLoader('Logout Success')
+  loadHeader();
+  loadHome();
 }
 
 function createAd() {
@@ -97,8 +100,8 @@ function createAd() {
           'Authorization': 'Kinvey ' + sessionStorage.getItem('authToken')
         },
         data: {
-          title: escape(title),
-          description: escape(description),
+          title: title,
+          description: description,
           date,
           'price': Number(price),
           'publisher': sessionStorage.getItem('username')
@@ -107,6 +110,7 @@ function createAd() {
 
         infoBoxLoader('Ad crearted');
         $('#formCreateAd').trigger('reset')
+        listAds();
 
       })
       .catch(function (response) {
@@ -114,61 +118,40 @@ function createAd() {
       })
   }
 
-
 }
 
 function listAds() {
-  let table = $('#ads table').empty();
+
   $.ajax({
     method: 'GET',
     url: BASE_URL + 'appdata/' + APP_KEY + '/ads',
     headers: {
       'Authorization': 'Kinvey ' + sessionStorage.getItem('authToken')
     }
-  }).then(function (response) {
+  }).then(async function (response) {
+    $('main').empty();
+    
     if (response.length !== 0) {
       infoBoxLoader("Ads listed")
-      response.reverse();
-      let tableHeader = $(`<tr>
-    <th>Title</th>
-    <th>Publisher</th>
-    <th>Description</th>
-    <th>Price</th>
-    <th>Date Published</th>
-    <th>Actions</th>
-</tr>`)
-      table.append(tableHeader);
 
       for (let i = 0; i < response.length; i++) {
-        let tableRow = $(`  <tr>
-      <td>${response[i].title}</td>
-      <td>${response[i].publisher}</td>
-      <td>${response[i].description}</td>
-      <td>${response[i].price}</td>
-      <td>${response[i].date}</td>
-    </tr>`)
 
-        let action = ($('<td>')
-          .append($('<a href="#">').text('[Delete]').click(function () {
-            deleteAdd(response[i]);
-          }))
-          .append($('<a href="#">').text('[Edit]').click(function () {
-            editAdd(response[i]);
-
-          })));
-        if (response[i]._acl.creator !== sessionStorage.getItem('userId')) {
-
-          action = ($('<td>')
-              .append($('<a href="#">').text('[Delete]').attr('disabled')))
-            .append($('<a href="#">').text('[Edit]').attr('disabled'));
-
-
+        response[i].isAuthorized = false;
+        if (response[i]._acl.creator === sessionStorage.getItem('userId')) {
+          response[i].isAuthorized = true;
         }
-        tableRow.append(action)
-        table.append(tableRow);
+
       }
+
+      let context = {
+        data: response.reverse(),
+      }
+
+      await sectionLoader(context, './templates/list-items-template.hbs');
+
     } else {
-      let adsDiv = $('#ads').append('<p>No advertisments available</p>')
+      $('main').empty();
+      $('main').append('<p>No advertisments available</p>');
     }
 
   }).catch(function (response) {
@@ -176,24 +159,34 @@ function listAds() {
   })
 }
 
-function editAdd(add) {
-  showView('viewEditAd');
-  $('#formEditAd div:nth-child(1) input').val(`${add._id}`);
-  $('#formEditAd div:nth-child(2) input').val(`${add.publisher}`);
-  $('#formEditAd div:nth-child(4) input').val(`${add.title}`);
-  $('#formEditAd textarea').val(`${add.description}`);
-  $('#formEditAd div:nth-child(8) input').val(`${add.date}`);
-  $('#formEditAd div:nth-child(10) input').val(`${add.price}`);
-
+function editAd(id) {
+  $.ajax({
+    method: 'GET',
+    url: BASE_URL + 'appdata/' + APP_KEY + '/ads/' + id,
+    headers: {
+      'Authorization': 'Kinvey ' + sessionStorage.getItem('authToken')
+    },
+  }).then(async function(response){
+    
+    await loadEditAd();
+    $('#title').val(`${response.title}`);
+    $('#description').val(`${response.description}`);
+    $('#date').val(`${response.date}`);
+    $('#price').val(`${response.price}`);
+    $('#id').val(`${id}`)
+  }).catch(function (response) {
+    handleAjaxError(response);
+  });
 }
 
-function uploadEditedAd() {
-  let id = $('#formEditAd div:nth-child(1) input').val();
-  let publisher = $('#formEditAd div:nth-child(2) input').val();
-  let title = $('#formEditAd div:nth-child(4) input').val();
-  let description = $('#formEditAd textarea').val();
-  let date = $('#formEditAd div:nth-child(8) input').val();
-  let price = $('#formEditAd div:nth-child(10) input').val();
+function uploadEditdAd() {
+
+  let publisher = sessionStorage.getItem('username');
+  let title = $('#title').val();
+  let description = $('#description').val();
+  let date = $('#date').val();
+  let price = $('#price').val();
+  let id = $('#id').val();
 
   $.ajax({
       method: 'PUT',
@@ -212,7 +205,6 @@ function uploadEditedAd() {
 
       $('#formEditAd').trigger('reset');
       listAds();
-      showView('viewAds');
       infoBoxLoader('Edit successful');
 
     })
@@ -221,10 +213,11 @@ function uploadEditedAd() {
     })
 }
 
-function deleteAdd(add) {
+function deleteAdd(id) {
+
   $.ajax({
     method: 'DELETE',
-    url: BASE_URL + 'appdata/' + APP_KEY + '/ads/' + add._id,
+    url: BASE_URL + 'appdata/' + APP_KEY + '/ads/' + id,
     headers: {
       'Authorization': 'Kinvey ' + sessionStorage.getItem('authToken')
     }
