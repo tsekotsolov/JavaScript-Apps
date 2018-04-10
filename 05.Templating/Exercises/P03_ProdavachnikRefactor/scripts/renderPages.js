@@ -4,13 +4,11 @@ async function loadHeader(){
     username:sessionStorage.getItem('username')
   }
 
-  $('header').empty();
-
   let source = await $.get('./templates/header-template.hbs');
   let template = Handlebars.compile(source);
   let instanceOfTemplate = template(context);
 
-  $('header').append(instanceOfTemplate);
+  $('header').html(instanceOfTemplate);
   
 }
 
@@ -20,22 +18,17 @@ async function sectionLoader(context, url) {
   let template = Handlebars.compile(source);
   let instanceOfTemplate = template(context);
 
-  $('main').append(instanceOfTemplate);
+  $('main').html(instanceOfTemplate);
 
 };
 
 async function loadHome() {
-  $('main').empty();
+
   await sectionLoader('', './templates/welcome-template.hbs');
 }
 
-async function loadAllAds() {
-  $('main').empty();
-  listAds();
-}
-
 async function loadCreateAd(){
-  $('main').empty();
+ 
   let context = {
     sectionType: 'viewCreateAd',
     formId: 'formCreateAd',
@@ -48,7 +41,7 @@ async function loadCreateAd(){
 }
 
 async function loadEditAd(){
-  $('main').empty();
+ 
   let context = {
     sectionType: 'viewEditAd',
     formId: 'formEditAd',
@@ -63,7 +56,7 @@ async function loadEditAd(){
 
 async function loadRegister() {
 
-  $('main').empty();
+  
   let context = {
     sectionType: 'viewRegister',
     headline: 'Please register here',
@@ -78,7 +71,7 @@ async function loadRegister() {
 }
 
 async function loadLogin() {
-  $('main').empty();
+ 
   let context = {
     sectionType: 'viewLogin',
     headline: 'Login here',

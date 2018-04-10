@@ -27,13 +27,12 @@ function registerUser() {
     signInUser(response);
     infoBoxLoader('Registration Success');
     loadHeader();
-    $('#formRegister div:nth-child(2) input').val('');
-    $('#formRegister div:nth-child(4) input').val('');
-    loadAllAds()
+    $('#formRegister').trigger('reset');
+    listAds();
 
 
   }).catch(function (response) {
-    handleAjaxError(response)
+    handleAjaxError(response);
   })
 
 }
@@ -61,8 +60,7 @@ function loginUser() {
     infoBoxLoader('Login Success');
     $('#formLogin').trigger('reset');
     loadHeader();
-    loadAllAds();
-
+    listAds();
 
   }).catch(function (response) {
     handleAjaxError(response);
@@ -91,7 +89,7 @@ function createAd() {
   let date = $('#formCreateAd div:nth-child(6) input').val();
   let price = $('#formCreateAd div:nth-child(8) input').val();
   if (title == '' || description == '' || date == '' || price == '') {
-    errorBoxLoader('Insufficient data to send ajax query')
+    errorBoxLoader('Insufficient data to send ajax query');
   } else {
     $.ajax({
         method: 'POST',
@@ -129,7 +127,6 @@ function listAds() {
       'Authorization': 'Kinvey ' + sessionStorage.getItem('authToken')
     }
   }).then(async function (response) {
-    $('main').empty();
     
     if (response.length !== 0) {
       infoBoxLoader("Ads listed")
@@ -150,8 +147,8 @@ function listAds() {
       await sectionLoader(context, './templates/list-items-template.hbs');
 
     } else {
-      $('main').empty();
-      $('main').append('<p>No advertisments available</p>');
+      
+      $('main').html('<p>No advertisments available</p>');
     }
 
   }).catch(function (response) {
