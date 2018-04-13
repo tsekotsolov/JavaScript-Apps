@@ -1,4 +1,4 @@
-async function startApp() {
+function startApp() {
    
     loadHeader();
     loadHome();

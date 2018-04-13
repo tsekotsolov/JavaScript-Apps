@@ -1,0 +1,69 @@
+<div id="menu">
+    {{>menupartial}}</div>
+<section id="viewComments">
+    <div class="post">
+        <div class="col thumbnail">
+            <a href="{{url}}">
+                <img src="{{imageUrl}}">
+            </a>
+        </div>
+        <div class="post-content">
+            <div class="title">
+                <a href="{{url}}">
+                    {{title}}
+                </a>
+            </div>
+            <div class="details">
+                <p>{{description}}</p>
+                <div class="info">
+                    submitted {{time}} ago by {{author}}
+                </div>
+                <div class="controls">
+                    <ul>
+                         {{#if isAuthorized}}
+                        <li class="action">
+                            <a class="editLink" href="#" onclick="editPost('{{_id}}')">edit</a>
+                        </li>
+                        <li class="action">
+                            <a class="deleteLink" href="#" onclick="deletePost('{{_id}}')">delete</a>
+                        </li>
+                        {{/if`  `   }}
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+    <div class="post post-content">
+        <form id="commentForm">
+            <label>Comment</label>
+            <textarea name="content" type="text"></textarea>
+            <input type="submit" value="Add Comment" id="btnPostComment">
+        </form>
+    </div>
+
+    {{!--
+    <article class="post post-content">
+        <p>Thanks, just what I needed.</p>
+        <div class="info">
+            submitted 5 days ago by Gosho |
+            <a href="#" class="deleteLink">delete</a>
+        </div>
+    </article>
+    <article class="post post-content">
+        <p>Tutorial is kinda outdated, but it works.</p>
+        <div class="info">
+            submitted 4 days ago by Kiril |
+            <a href="#" class="deleteLink">delete</a>
+        </div>
+    </article>
+    <article class="post post-content">
+        <p>Beats React any day! So must easier and less boilerplate.</p>
+        <div class="info">
+            submitted 3 days ago by Nakov |
+            <a href="#" class="deleteLink">delete</a>
+        </div>
+    </article> --}}
+
+</section>
