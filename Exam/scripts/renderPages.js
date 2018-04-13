@@ -30,8 +30,6 @@ async function loadCreatePost() {
   containerFiller({'formHeading':'Submit Link Post','functionToExec':'submitNewPost'},'./templates/create-edit-post.hbs','.content')
 }
 
-
-
 $(document).on({
   ajaxStart: async function () {
     $("#loadingBox").show()

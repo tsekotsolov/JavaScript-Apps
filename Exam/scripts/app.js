@@ -291,6 +291,7 @@ async function loadComments(id) {
       let template = Handlebars.compile(source);
       allComments = template(context);
 
+      
     }).catch(function (resp_comments) {
       handleAjaxError(resp_comments);
     });
