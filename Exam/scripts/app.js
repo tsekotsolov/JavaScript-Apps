@@ -137,10 +137,10 @@ function myPosts() {
 
 function submitNewPost(event) {
   event.preventDefault();
-  let url = $('#submitForm').find('input[name="url"]').val();
-  let title = $('#submitForm').find('input[name="title"]').val();
-  let image = $('#submitForm').find('input[name="image"]').val();
-  let comment = $('#submitForm').find('textarea[name="comment"]').val();
+  let url = escapeHtml($('#submitForm').find('input[name="url"]').val());
+  let title = escapeHtml($('#submitForm').find('input[name="title"]').val());
+  let image = escapeHtml($('#submitForm').find('input[name="image"]').val());
+  let comment = escapeHtml($('#submitForm').find('textarea[name="comment"]').val());
 
   if (url == '' || title == '') {
     errorBoxLoader('Insufficient data to send ajax query');
@@ -213,10 +213,10 @@ function editPost(id) {
 
 function submitEditedPost(event) {
   event.preventDefault();
-  let url = $('#submitForm').find('input[name="url"]').val();
-  let title = $('#submitForm').find('input[name="title"]').val();
-  let image = $('#submitForm').find('input[name="image"]').val();
-  let comment = $('#submitForm').find('textarea[name="comment"]').val();
+  let url = escapeHtml($('#submitForm').find('input[name="url"]').val());
+  let title = escapeHtml($('#submitForm').find('input[name="title"]').val());
+  let image = escapeHtml($('#submitForm').find('input[name="image"]').val());
+  let comment = escapeHtml($('#submitForm').find('textarea[name="comment"]').val());
   let id = $('#submitForm').attr('baseid');
 
   $.ajax({
@@ -254,18 +254,58 @@ async function loadComments(id) {
       'Authorization': 'Kinvey ' + sessionStorage.getItem('authToken')
     },
   }).then(async function (response) {
-    
+
     infoBoxLoader("Post details loaded");
 
-      response.time = calcTime(response._kmd.ect);
-      response.isAuthorized = false;
-      if (response._acl.creator === sessionStorage.getItem('userId')) {
-        response.isAuthorized = true;
+    response.time = calcTime(response._kmd.ect);
+    response.isAuthorized = false;
+    if (response._acl.creator === sessionStorage.getItem('userId')) {
+      response.isAuthorized = true;
+    }
+    if (response.description === '') {
+      response.description = 'No description';
+    }
+
+    let allComments = '';
+    await $.ajax({
+      method: 'GET',
+      url: BASE_URL + 'appdata/' + APP_KEY + '/comments/' + `?query={"postId":"${response._id}"}`,
+      headers: {
+        'Authorization': 'Kinvey ' + sessionStorage.getItem('authToken')
+      },
+    }).then(async function (resp_comments) {
+
+      for (let i = 0; i < resp_comments.length; i++) {
+        
+        resp_comments[i].isAuthorized = false;
+        if (resp_comments[i]._acl.creator === sessionStorage.getItem('userId')) {
+          resp_comments[i].isAuthorized = true;
+        }
       }
-    
+
+      let context = {
+        data: resp_comments,
+      }
+
+      let source = await $.get('./templates/comments.hbs');
+      let template = Handlebars.compile(source);
+      allComments = template(context);
+
+    }).catch(function (resp_comments) {
+      handleAjaxError(resp_comments);
+    });
+
     let menupartial = await $.get('./templates/menupartial.hbs');
     Handlebars.registerPartial('menupartial', menupartial);
-    containerFiller(response, './templates/comments.hbs', '.content');
+
+    await containerFiller(response, './templates/postDetails.hbs', '.content');
+
+    if (allComments != '') {
+      $('#viewComments').append(allComments);
+    } else {
+      $('#viewComments').append('<article class="post post-content">No comments yet.</article>');
+    }
+
 
   }).catch(function (response) {
     handleAjaxError(response);
@@ -315,4 +355,13 @@ function calcTime(dateIsoFormat) {
     if (value !== 1) return 's';
     else return '';
   }
+}
+
+function escapeHtml(unsafe) {
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
