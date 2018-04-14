@@ -4,7 +4,7 @@
         <div class="info">
             submitted {{time}} days ago by {{author}} |
             {{#if isAuthorized}}
-            <a href="#" class="deleteLink">delete</a>
+            <a href="#" class="deleteLink" onclick="deleteComment(event)" data-id="{{_id}}">delete</a>
             {{/if}}
         </div>
     </article>

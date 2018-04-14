@@ -144,6 +144,10 @@ function submitNewPost(event) {
 
   if (url == '' || title == '') {
     errorBoxLoader('Insufficient data to send ajax query');
+  } else if (!url.startsWith('http')) {
+
+    errorBoxLoader('URL must start with http');
+
   } else {
     $.ajax({
         method: 'POST',
@@ -276,7 +280,8 @@ async function loadComments(id) {
     }).then(async function (resp_comments) {
 
       for (let i = 0; i < resp_comments.length; i++) {
-        
+
+        resp_comments[i].time = calcTime(resp_comments[i]._kmd.ect);
         resp_comments[i].isAuthorized = false;
         if (resp_comments[i]._acl.creator === sessionStorage.getItem('userId')) {
           resp_comments[i].isAuthorized = true;
@@ -291,7 +296,7 @@ async function loadComments(id) {
       let template = Handlebars.compile(source);
       allComments = template(context);
 
-      
+
     }).catch(function (resp_comments) {
       handleAjaxError(resp_comments);
     });
@@ -311,6 +316,59 @@ async function loadComments(id) {
   }).catch(function (response) {
     handleAjaxError(response);
   });
+
+}
+
+function postComment(event) {
+  event.preventDefault();
+
+  let content = escapeHtml($('#commentForm').find('textarea[name="content"]').val());
+  let postId = $('.post').attr('data-id');
+
+
+  if (content == '') {
+    errorBoxLoader('Message area can not be empty');
+  } else {
+    $.ajax({
+        method: 'POST',
+        url: BASE_URL + 'appdata/' + APP_KEY + '/comments',
+        headers: {
+          'Authorization': 'Kinvey ' + sessionStorage.getItem('authToken')
+        },
+        data: {
+          content,
+          postId,
+          'author': sessionStorage.getItem('username')
+        }
+      }).then(function (response) {
+
+        infoBoxLoader('Comment Added');
+        $('#commentForm').trigger('reset')
+        loadComments(postId);
+
+      })
+      .catch(function (response) {
+        handleAjaxError(response)
+      })
+  }
+
+}
+
+function deleteComment(event) {
+  let id = $(event.target).attr('data-id');
+
+  $.ajax({
+    method: 'DELETE',
+    url: BASE_URL + 'appdata/' + APP_KEY + '/comments/' + id,
+    headers: {
+      'Authorization': 'Kinvey ' + sessionStorage.getItem('authToken')
+    }
+  }).then(function (response) {
+    infoBoxLoader('Comment deleted');
+    loadComments($('.post').attr('data-id'));
+  }).catch(function (response) {
+    handleAjaxError(response);
+  })
 
 }
 

@@ -1,7 +1,7 @@
 <div id="menu">
     {{>menupartial}}</div>
 <section id="viewComments">
-    <div class="post">
+    <div class="post" data-id="{{_id}}">
         <div class="col thumbnail">
             <a href="{{url}}">
                 <img src="{{imageUrl}}">
@@ -39,7 +39,7 @@
         <form id="commentForm">
             <label>Comment</label>
             <textarea name="content" type="text"></textarea>
-            <input type="submit" value="Add Comment" id="btnPostComment">
+            <input type="submit" value="Add Comment" id="btnPostComment" onclick="postComment(event)">
         </form>
     </div>
     

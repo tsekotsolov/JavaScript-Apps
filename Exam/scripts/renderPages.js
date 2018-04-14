@@ -30,16 +30,6 @@ async function loadCreatePost() {
   containerFiller({'formHeading':'Submit Link Post','functionToExec':'submitNewPost'},'./templates/create-edit-post.hbs','.content')
 }
 
-$(document).on({
-  ajaxStart: async function () {
-    $("#loadingBox").show()
-
-  },
-  ajaxStop: function () {
-    $("#loadingBox").hide()
-  }
-})
-
 function infoBoxLoader(message) {
   let infobox = $('#infoBox')
   $('#infoBox span').text(message);
@@ -69,3 +59,13 @@ function handleAjaxError(response) {
   errorBoxLoader(errorMsg);
 
 }
+
+$(document).on({
+  ajaxStart: async function () {
+    $("#loadingBox").show()
+
+  },
+  ajaxStop: function () {
+    $("#loadingBox").hide()
+  }
+})
