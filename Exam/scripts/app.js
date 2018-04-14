@@ -95,10 +95,23 @@ function signInUser(response) {
 }
 
 function logoutUser() {
-  sessionStorage.clear();
-  infoBoxLoader('Logout Success')
-  loadHeader();
-  loadWelcomePage();
+  $.ajax({
+    method: 'POST',
+    url: BASE_URL + 'user/' + APP_KEY + '/_logout',
+    headers: {
+      'Authorization': 'Kinvey ' + sessionStorage.getItem('authToken')
+    },
+
+  }).then(function () {
+    sessionStorage.clear();
+    infoBoxLoader('Logout Success')
+    loadHeader();
+    loadWelcomePage();
+  }).catch(function (response) {
+    handleAjaxError(response);
+  });
+
+
 }
 
 function listPosts() {
