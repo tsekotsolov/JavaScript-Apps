@@ -117,9 +117,10 @@ async function loadActiveReceipt() {
         }
     }).then(async function (response) {
 
-        infoBoxLoader("Active receipt loaded!");
+       
         if (response.length === 0) {
             createActiveReceipt();
+            infoBoxLoader("Active receipt loaded!");
         } else {
             $.ajax({
                 method: 'GET',
@@ -148,7 +149,7 @@ async function loadActiveReceipt() {
                 let headerpartial = await $.get('./templates/headerpartial.hbs');
                 Handlebars.registerPartial('headerpartial', headerpartial);
                 containerFiller(resp, './templates/create-receipt.hbs', '#container');
-                infoBoxLoader('Entry Added');
+                infoBoxLoader("Active receipt loaded!");
 
 
             }).catch(function (resp) {
@@ -189,7 +190,7 @@ async function addProduct(event) {
     event.preventDefault();
     let type = $('#create-entry-form').find('input[name="type"]').val();
     let qty = $('#create-entry-form').find('input[name="qty"]').val();
-    let price = $('#create-entry-form').find('input[name="price"]').val();
+    let price = Number($('#create-entry-form').find('input[name="price"]').val()).toFixed(2);
     let subtotal = (Number(qty) * Number(price)).toFixed(2);
 
     let receiptId = $('#addItemBtn').attr('data-id');
@@ -349,5 +350,24 @@ function loadUserReceipts(event) {
         .catch(function (resp) {
             handleAjaxError(resp)
         })
+
+}
+
+function calcSubTotal(){
+
+    let qty = $('#create-entry-form').find('input[name="qty"]').val();
+    let price = Number($('#create-entry-form').find('input[name="price"]').val()).toFixed(2);
+    let subtotal = (Number(qty) * Number(price)).toFixed(2);
+   
+    $('#create-entry-form div:nth-child(4)').html(subtotal);
+
+    let subtotals = ($('.row div:nth-child(4)')).toArray();
+
+    let sum = 0
+    for (const number of subtotals) {
+        sum += Number($(number).text());
+    }
+
+    $('#create-receipt-form div:nth-child(4)').text(sum.toFixed(2));
 
 }
