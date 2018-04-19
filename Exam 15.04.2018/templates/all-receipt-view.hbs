@@ -19,14 +19,10 @@
                     <div class="col wide">{{productCount}}</div>
                     <div class="col">{{total}}</div>
                     <div class="col">
-                        <a href="#">Details</a>
+                        <a href="#" data-id="{{_id}}" onclick="loadReceiptDetails(event)">Details</a>
                     </div>
                 </div>
                 {{/each}}
                
             </div>
         </section>
-
-        <footer>
-    PointOfSale SPA © 2018
-</footer>

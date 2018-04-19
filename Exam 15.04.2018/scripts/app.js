@@ -354,7 +354,7 @@ function loadUserReceipts(event) {
 
 }
 
- function  calcSubTotal() {
+function calcSubTotal() {
 
     let qty = $('#create-entry-form').find('input[name="qty"]').val();
     let price = Number($('#create-entry-form').find('input[name="price"]').val()).toFixed(2);
@@ -366,7 +366,7 @@ function loadUserReceipts(event) {
     }
 
     if (!regex.test(price)) {
-         $('#create-entry-form').find('input[name="price"]').val('')
+        $('#create-entry-form').find('input[name="price"]').val('')
 
     }
 
@@ -386,5 +386,31 @@ function loadUserReceipts(event) {
         $('#create-receipt-form div:nth-child(4)').text(sum.toFixed(2));
     }
 
+
+}
+
+function loadReceiptDetails(event) {
+
+    let id = $(event.target).attr('data-id');
+
+    $.ajax({
+            method: 'GET',
+            url: BASE_URL + 'appdata/' + APP_KEY + `/entries?query={"receiptId":"${id}"}`,
+            headers: {
+                'Authorization': 'Kinvey ' + sessionStorage.getItem('authToken')
+            }
+
+        }).then(function (response) {
+
+            let content = {
+                data: response,
+                user: response[0].author
+            }
+
+            containerFiller(content, './templates/receipt-details.hbs', '#container')
+        })
+        .catch(function (response) {
+            handleAjaxError(response);
+        })
 
 }
