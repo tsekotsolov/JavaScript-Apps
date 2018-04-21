@@ -165,7 +165,7 @@ function purchaseItem(event) {
         if (currentCartResp.cart === undefined) {
           currentCartResp.cart = {}
           currentCartResp.cart[id] = product;
-          
+
         } else {
 
           if (currentCartResp.cart.hasOwnProperty(id)) {
@@ -222,34 +222,29 @@ function loadMyCart() {
 
     if (response.cart === undefined) {
       containerFiller({}, './templates/mycart.hbs', 'main');
-     
-    }
 
-    else{
-      
-    let myCart = response.cart;
-    let cartArray = Object.values(myCart);
-    let ids = Object.keys(myCart);
-    let cartData = [];
+    } else {
 
-    for (let i = 0; i < cartArray.length; i++) {
-      let productData = {
-        product: cartArray[i].product.name,
-        description: cartArray[i].product.description,
-        quantity: cartArray[i].quantity,
-        totalPrice: (cartArray[i].product.price * cartArray[i].quantity).toFixed(2),
-        id: ids[i]
+      let myCart = response.cart;
+      let cartData = [];
+
+      for (const key in myCart) {
+
+        let productData = {}
+        productData.id = key;
+        productData.product = myCart[key].product.name;
+        productData.quantity = myCart[key].quantity;
+        productData.description = myCart[key].product.description;
+        productData.totalPrice = (productData.quantity * myCart[key].product.price).toFixed(2);
+        cartData.push(productData);
       }
 
-      cartData.push(productData)
+      let context = {
+        data: cartData
+      }
+      containerFiller(context, './templates/mycart.hbs', 'main');
     }
 
-    let context = {
-      data: cartData
-    }
-    containerFiller(context, './templates/mycart.hbs', 'main');
-    }
-    
   }).catch(function (response) {
     handleAjaxError(response);
   })
