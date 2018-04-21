@@ -1,0 +1,31 @@
+ {{>errorpartial}}
+
+<section id="viewCart">
+    <h1>My Cart</h1>
+    <div class="products" id="cartProducts">
+        <table>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Description</th>
+                    <th>Quantity</th>
+                    <th>Total Price</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each data}}
+                <tr>
+                    <td>{{product}}</td>
+                    <td>{{description}}</td>
+                    <td>{{quantity}}</td>
+                    <td>{{totalPrice}}</td>
+                    <td>
+                        <button data-id="{{id}}" onclick="discardItem(event)">Discard</button>
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+</section>

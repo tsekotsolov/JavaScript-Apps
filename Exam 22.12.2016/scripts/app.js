@@ -9,9 +9,9 @@ function registerUser(event) {
 
   event.preventDefault();
 
-  let username = $('#registerUsername').val();
-  let password = $('#registerPasswd').val();
-  let name = $('#registerName').val();
+  let username = escapeHtml($('#registerUsername').val());
+  let password = escapeHtml($('#registerPasswd').val());
+  let name = escapeHtml($('#registerName').val());
   let cart = {}
 
   $.ajax({
@@ -41,8 +41,8 @@ function registerUser(event) {
 
 function loginUser(event) {
   event.preventDefault();
-  let username = $('#loginUsername').val();
-  let password = $('#loginPasswd').val();
+  let username = escapeHtml($('#loginUsername').val());
+  let password = escapeHtml($('#loginPasswd').val());
 
   if (username === '' || password === '') {
     errorBoxLoader('Username or password can not be empty');
@@ -165,7 +165,7 @@ function purchaseItem(event) {
         if (currentCartResp.cart === undefined) {
           currentCartResp.cart = {}
           currentCartResp.cart[id] = product;
-          console.log(currentCartResp);
+          
         } else {
 
           if (currentCartResp.cart.hasOwnProperty(id)) {
@@ -192,7 +192,6 @@ function purchaseItem(event) {
             }
           }).then(function (resp) {
 
-            console.log(resp);
             infoBoxLoader('Product purchased')
 
           })
@@ -209,4 +208,102 @@ function purchaseItem(event) {
   }).catch(function (response) {
     handleAjaxError(response);
   })
+}
+
+function loadMyCart() {
+  $.ajax({
+    method: 'GET',
+    url: BASE_URL + 'user/' + APP_KEY + '/' + sessionStorage.getItem('userId'),
+    headers: {
+      'Authorization': 'Kinvey ' + sessionStorage.getItem('authToken')
+    },
+
+  }).then(function (response) {
+
+    if (response.cart === undefined) {
+      containerFiller({}, './templates/mycart.hbs', 'main');
+     
+    }
+
+    else{
+      
+    let myCart = response.cart;
+    let cartArray = Object.values(myCart);
+    let ids = Object.keys(myCart);
+    let cartData = [];
+
+    for (let i = 0; i < cartArray.length; i++) {
+      let productData = {
+        product: cartArray[i].product.name,
+        description: cartArray[i].product.description,
+        quantity: cartArray[i].quantity,
+        totalPrice: (cartArray[i].product.price * cartArray[i].quantity).toFixed(2),
+        id: ids[i]
+      }
+
+      cartData.push(productData)
+    }
+
+    let context = {
+      data: cartData
+    }
+    containerFiller(context, './templates/mycart.hbs', 'main');
+    }
+    
+  }).catch(function (response) {
+    handleAjaxError(response);
+  })
+
+}
+
+function discardItem(event) {
+
+  let id = $(event.target).attr("data-id");
+
+  $.ajax({
+    method: 'GET',
+    url: BASE_URL + 'user/' + APP_KEY + '/' + sessionStorage.getItem('userId'),
+    headers: {
+      'Authorization': 'Kinvey ' + sessionStorage.getItem('authToken')
+    },
+
+  }).then(function (response) {
+
+
+    delete response.cart[id];
+
+    $.ajax({
+        method: 'PUT',
+        url: BASE_URL + 'user/' + APP_KEY + '/' + sessionStorage.getItem('userId'),
+        headers: {
+          'Authorization': 'Kinvey ' + sessionStorage.getItem('authToken')
+        },
+        data: {
+          'cart': response.cart,
+          'name': sessionStorage.getItem('name')
+        }
+      }).then(function (resp) {
+
+        infoBoxLoader('Product discarded');
+        loadMyCart();
+
+      })
+      .catch(function (response) {
+        handleAjaxError(response);
+      })
+
+  }).catch(function (response) {
+    handleAjaxError(response);
+
+  })
+
+}
+
+function escapeHtml(unsafe) {
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
