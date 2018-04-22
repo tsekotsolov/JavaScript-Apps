@@ -1,21 +1,22 @@
  {{>headerpartial}} {{>menupartial}}
+
 <section id="viewMe">
     <div class="content">
-        <div class="chirper">
+       
+             <div class="chirper">
 
-            <h2 class="titlebar">{{user}}</h2>
+                <h2 class="titlebar">{{user}}</h2>
 
-            <form id="formSubmitChirpMy" class="chirp-form">
-                <textarea name="text" class="chirp-input"></textarea>
-                <input class="chirp-submit" id="btnSubmitChirpMy" value="Chirp" type="submit">
-            </form>
+                <form id="formSubmitChirp" class="chirp-form">
+                    <textarea name="text" class="chirp-input"></textarea>
+                    <input class="chirp-submit" id="btnSubmitChirp" value="Chirp" type="submit" onclick="postChirp(event)">
+                </form>
 
-            <div id="myStats" class="user-details">
-                <span>0 chirps</span> |
-                <span>1 following</span> |
-                <span>0 followers</span>
+                <div id="userStats" class="user-details">
+                    <span>{{chirps}} chirps</span> | <span>{{following}} following</span> | <span>{{followers}} followers</span>
+                </div>
             </div>
-        </div>
+        
 
         <div id="myChirps" class="chirps">
 
@@ -29,8 +30,8 @@
             {{else}} {{#each chirpsResponse}}
             <article class="chirp">
                 <div class="titlebar">
-                    <a href="#" class="chirp-author">delete</a>
-                    <span class="chirp-time">{{date}}</span>
+                    <a class="chirp-author">{{author}}</a>
+                    <span class="chirp-time"> <a href="#" data=id="{{_id}}">delete</a> {{date}}</span>
                 </div>
                 <p>{{text}}</p>
             </article>
