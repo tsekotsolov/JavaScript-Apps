@@ -12,7 +12,7 @@ function registerUser(event) {
   let username = $('#formRegister').find('input[name="username"]').val();
   let password = $('#formRegister').find('input[name="password"]').val();
   let confirmPassword = $('#formRegister').find('input[name="repeatPass"]').val();
-  let subscriptions = [''];
+  let subscriptions = [""];
 
   const usernameRegex = /^.{5,}$/g;
 
@@ -136,6 +136,10 @@ function loadHomeScreen() {
     let allSubscriptionsChirps = [];
     let parsedArr = JSON.stringify(subscriptionsArray);
 
+    if (response.subscriptions[0] === '') {
+      following = response.subscriptions.length - 1;
+
+    }
 
     // count current user followers 
     await $.ajax({
@@ -221,13 +225,13 @@ function postChirp(event) {
 
   let text = escapeHtml($('textarea').val());
 
-  if(text.length>150){
+  if (text.length > 150) {
     errorBoxLoader('More than 150 characters in your post');
     $('textarea').val('');
     return;
   }
 
-  if(text===''){
+  if (text === '') {
     errorBoxLoader('Can not post an emtpy chirp');
     $('textarea').val('');
     return;
@@ -333,9 +337,9 @@ function loadUserFeed() {
   })
 }
 
-function deleteChirp(event){
+function deleteChirp(event) {
 
-let id = $(event.target).attr('data-id');
+  let id = $(event.target).attr('data-id');
 
   $.ajax({
     method: 'DELETE',
@@ -349,5 +353,129 @@ let id = $(event.target).attr('data-id');
   }).catch(function (response) {
     handleAjaxError(response);
   })
+
+}
+
+function loadDiscover() {
+  $.ajax({
+    method: 'GET',
+    url: BASE_URL + 'user/' + APP_KEY,
+    headers: {
+      'Authorization': 'Kinvey ' + sessionStorage.getItem('authToken')
+    },
+
+  }).then(async function (response) {
+
+
+    for (let i = 0; i < response.length; i++) {
+
+      let user = response[i].username
+      await $.ajax({
+        method: 'GET',
+        url: BASE_URL + 'user/' + APP_KEY + '/' + `?query={"subscriptions":"${user}"}`,
+        headers: {
+          'Authorization': 'Kinvey ' + sessionStorage.getItem('authToken')
+        },
+
+      }).then(function (resp) {
+
+        
+        response[i].followers = resp.length;
+        if (response[i].username === sessionStorage.getItem('username')) {
+          delete(response[i]);
+        }
+
+      }).catch(function (resp) {
+        handleAjaxError(resp);
+      })
+    }
+
+
+    containerFiller({
+      response
+    }, './templates/discover.hbs', '#main');
+
+  }).catch(function (resp) {
+    handleAjaxError(resp);
+  })
+
+
+
+
+}
+
+function loadOtherUserFeed(event) {
+  let name = $(event.target).attr('data-id');
+
+
+  $.ajax({
+    method: 'GET',
+    url: BASE_URL + 'appdata/' + APP_KEY + '/' + `chirps?query={"author":"${name}"}`,
+    headers: {
+      'Authorization': 'Kinvey ' + sessionStorage.getItem('authToken')
+    },
+
+  }).then(async function (response) {
+
+    let chirps = response.length;
+    let followers = 0;
+    let following=0;
+
+    for (let i = 0; i < response.length; i++) {
+
+      let date = calcTime(response[i]._kmd.ect)
+      response[i].date = date;
+
+    }
+
+    await $.ajax({
+      method: 'GET',
+      url: BASE_URL + 'user/' + APP_KEY + '/' + `?query={"subscriptions":"${name}"}`,
+      headers: {
+        'Authorization': 'Kinvey ' + sessionStorage.getItem('authToken')
+      },
+
+    }).then(function(resp){
+        
+        followers=resp.length
+    }).catch(function (resp) {
+      handleAjaxError(resp);
+    })
+
+
+    await $.ajax({
+      method: 'GET',
+      url: BASE_URL + 'user/' + APP_KEY + '/' + `?query={"username":"${name}"}`,
+      headers: {
+        'Authorization': 'Kinvey ' + sessionStorage.getItem('authToken')
+      },
+  
+    }).then(function(currentUserResponse){
+      
+      if(currentUserResponse[0].subscriptions[0]==''){
+        following=currentUserResponse.length-1;
+      }else{
+        following=currentUserResponse.length
+      }
+      
+    }).catch(function (resp) {
+      handleAjaxError(resp);
+    })
+
+    containerFiller({
+      name,
+      response,
+      chirps,
+      followers,
+      following
+    }, './templates/otherUserFeed.hbs', '#main');
+
+  }).catch(function (response) {
+    handleAjaxError(response);
+  })
+
+
+
+
 
 }

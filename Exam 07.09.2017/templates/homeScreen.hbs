@@ -25,7 +25,7 @@
             {{#each data}}
                 <article class="chirp">
                     <div class="titlebar">
-                        <a href="#" class="chirp-author">{{author}}</a>
+                        <a href="#" class="chirp-author" data-id="{{author}}" onclick="loadOtherUserFeed(event)">{{author}}</a>
                         <span class="chirp-time">{{date}}</span>
                     </div>
                     <p>{{text}}</p>

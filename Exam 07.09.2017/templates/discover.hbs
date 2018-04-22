@@ -1,0 +1,20 @@
+
+{{>headerpartial}} {{>menupartial}}
+<section id="viewDiscover">
+        <div class="content">
+            <div class="chirps">
+                <h2 class="titlebar">Discover</h2>
+                <div id="userlist">
+                  {{#each response}}
+                    <div class="userbox">
+                        <div><a href="#" class="chirp-author" data-id="{{username}}" onclick="loadOtherUserFeed(event)">{{username}}</a></div>
+                        <div class="user-details">
+                            <span>{{followers}} followers</span>
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+        </div>
+    </section>
+    {{>footerpartial}}
