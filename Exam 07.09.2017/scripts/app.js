@@ -12,7 +12,7 @@ function registerUser(event) {
   let username = $('#formRegister').find('input[name="username"]').val();
   let password = $('#formRegister').find('input[name="password"]').val();
   let confirmPassword = $('#formRegister').find('input[name="repeatPass"]').val();
-  let subscriptions = false;
+  let subscriptions = [''];
 
   const usernameRegex = /^.{5,}$/g;
 
@@ -79,12 +79,12 @@ function loginUser(event) {
     infoBoxLoader('Login Success');
     $('#formLogin').trigger('reset');
     loadHomeScreen();
-    
+
   }).catch(function (response) {
     $('#formLogin').trigger('reset');
-   
+
     handleAjaxError(response);
-    
+
   })
 }
 
@@ -93,7 +93,7 @@ function signInUser(response) {
   sessionStorage.setItem('username', response.username);
   sessionStorage.setItem('authToken', response._kmd.authtoken);
   sessionStorage.setItem('userId', response._id);
-  sessionStorage.setItem('subscriptions', response.subscriptions);
+  sessionStorage.setItem('subscriptions', JSON.stringify(response.subscriptions));
 
 }
 
@@ -108,7 +108,7 @@ function logoutUser() {
   }).then(function () {
     sessionStorage.clear();
     infoBoxLoader('Logout Success')
-    loadRegisterPage() 
+    loadRegisterPage()
   }).catch(function (response) {
     handleAjaxError(response);
   });
@@ -116,17 +116,177 @@ function logoutUser() {
 
 }
 
-function loadHomeScreen(){
+function loadHomeScreen() {
 
-  let userSubscriptions = sessionStorage.getItem('subscriptions').split(',');
-  let following = userSubscriptions.length;
-  let user = sessionStorage.getItem('username');
+  // get the current user data from users database
+  $.ajax({
+    method: 'GET',
+    url: BASE_URL + 'user/' + APP_KEY + '/' + sessionStorage.getItem('userId'),
+    headers: {
+      'Authorization': 'Kinvey ' + sessionStorage.getItem('authToken')
+    },
 
-  console.log(userSubscriptions);
-  console.log(user);
-  console.log(following);
+  }).then(async function (response) {
+
+    let user = sessionStorage.getItem('username');
+    let subscriptionsArray = response.subscriptions;
+    let following = response.subscriptions.length;
+    let followers = 0;
+    let chirps = 0;
+    let allSubscriptionsChirps = [];
+    let parsedArr = JSON.stringify(subscriptionsArray);
 
 
-  containerFiller({user,following}, './templates/homeScreen.hbs', '#main');
+    // count current user followers 
+    await $.ajax({
+      method: 'GET',
+      url: BASE_URL + 'user/' + APP_KEY + '/' + `?query={"subscriptions":"${user}"}`,
+      headers: {
+        'Authorization': 'Kinvey ' + sessionStorage.getItem('authToken')
+      },
 
+    }).then(function (resp) {
+      followers = resp.length;
+
+
+    }).catch(function (resp) {
+      handleAjaxError(resp);
+    })
+
+    //count current user chirps 
+
+    await $.ajax({
+      method: 'GET',
+      url: BASE_URL + 'appdata/' + APP_KEY + '/' + `chirps?query={"author":"${user}"}`,
+      headers: {
+        'Authorization': 'Kinvey ' + sessionStorage.getItem('authToken')
+      },
+
+    }).then(function (chirpsResponse) {
+
+      chirps = chirpsResponse.length;
+
+    }).catch(function (chirpsResponse) {
+      handleAjaxError(chirpsResponse);
+    })
+
+    //List all Chirps from subscriptions 
+
+    await $.ajax({
+      method: 'GET',
+      url: BASE_URL + 'appdata/' + APP_KEY + '/' + `chirps?query={"author":{"$in": ${parsedArr}}}&sort={"_kmd.ect": 1}`,
+      headers: {
+        'Authorization': 'Kinvey ' + sessionStorage.getItem('authToken')
+      },
+
+    }).then(function (allSubscriptionsResponse) {
+
+      for (let i = 0; i < allSubscriptionsResponse.length; i++) {
+
+        let date = calcTime(allSubscriptionsResponse[i]._kmd.ect)
+        allSubscriptionsResponse[i].date = date;
+      }
+
+      allSubscriptionsChirps = allSubscriptionsResponse
+
+    }).catch(function (allSubscriptionsResponse) {
+      handleAjaxError(allSubscriptionsResponse);
+    })
+
+    let hasSubscriptions = true;
+
+    if (allSubscriptionsChirps.length !== 0) {
+      hasSubscriptions = false;
+    }
+
+    containerFiller({
+      user,
+      following,
+      followers,
+      chirps,
+      hasSubscriptions,
+      data: allSubscriptionsChirps
+    }, './templates/homeScreen.hbs', '#main');
+
+
+
+  }).catch(function (response) {
+    handleAjaxError(response);
+  })
+
+}
+
+function postChirp(event) {
+  event.preventDefault();
+
+  let text = escapeHtml($('textarea').val());
+
+  $.ajax({
+      method: 'POST',
+      url: BASE_URL + 'appdata/' + APP_KEY + '/chirps',
+      headers: {
+        'Authorization': 'Kinvey ' + sessionStorage.getItem('authToken')
+      },
+      data: {
+        text,
+        'author': sessionStorage.getItem('username')
+      }
+    }).then(function (response) {
+
+      infoBoxLoader('Chirp published.');
+      $('textarea').val('');
+      loadUserFeed();
+
+    })
+    .catch(function (response) {
+      handleAjaxError(response)
+    });
+
+
+}
+
+function loadUserFeed() {
+
+   $.ajax({
+    method: 'GET',
+    url: BASE_URL + 'appdata/' + APP_KEY + '/' + `chirps?query={"author":"${sessionStorage.getItem('username')}"}`,
+    headers: {
+      'Authorization': 'Kinvey ' + sessionStorage.getItem('authToken')
+    },
+
+  }).then(function (chirpsResponse) {
+    
+    let user = sessionStorage.getItem('username');
+    let following = 0;
+    let followers = 0;
+    let chirps = chirpsResponse.length;
+
+
+    for (let i = 0; i < chirpsResponse.length; i++) {
+
+      let date = calcTime(chirpsResponse[i]._kmd.ect)
+      chirpsResponse[i].date = date;
+    }
+    
+    
+    let hasChirps = true;
+
+    if (chirps !== 0) {
+      hasChirps = false;
+    }
+    containerFiller({ 
+      user,
+      following,
+      followers,
+      chirps,
+      hasChirps,
+      chirpsResponse
+      
+    }, './templates/myFeed.hbs', '#main');
+
+    console.log(chirpsResponse);
+
+  }).catch(function (chirpsResponse) {
+    handleAjaxError(chirpsResponse);
+  })
 }
