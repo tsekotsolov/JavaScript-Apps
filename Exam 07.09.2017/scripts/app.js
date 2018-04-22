@@ -453,9 +453,9 @@ function loadOtherUserFeed(event) {
     }).then(function(currentUserResponse){
       
       if(currentUserResponse[0].subscriptions[0]==''){
-        following=currentUserResponse.length-1;
+        following=currentUserResponse[0].subscriptions.length-1;
       }else{
-        following=currentUserResponse.length
+        following=currentUserResponse[0].subscriptions.length
       }
       
     }).catch(function (resp) {
