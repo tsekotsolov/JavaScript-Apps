@@ -468,6 +468,7 @@ function loadOtherUserFeed(event) {
       chirps,
       followers,
       following
+
     }, './templates/otherUserFeed.hbs', '#main');
 
   }).catch(function (response) {
