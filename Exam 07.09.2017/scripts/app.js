@@ -221,6 +221,18 @@ function postChirp(event) {
 
   let text = escapeHtml($('textarea').val());
 
+  if(text.length>150){
+    errorBoxLoader('More than 150 characters in your post');
+    $('textarea').val('');
+    return;
+  }
+
+  if(text===''){
+    errorBoxLoader('Can not post an emtpy chirp');
+    $('textarea').val('');
+    return;
+  }
+
   $.ajax({
       method: 'POST',
       url: BASE_URL + 'appdata/' + APP_KEY + '/chirps',
@@ -247,15 +259,15 @@ function postChirp(event) {
 
 function loadUserFeed() {
 
-   $.ajax({
+  $.ajax({
     method: 'GET',
     url: BASE_URL + 'appdata/' + APP_KEY + '/' + `chirps?query={"author":"${sessionStorage.getItem('username')}"}`,
     headers: {
       'Authorization': 'Kinvey ' + sessionStorage.getItem('authToken')
     },
 
-  }).then(function (chirpsResponse) {
-    
+  }).then(async function (chirpsResponse) {
+
     let user = sessionStorage.getItem('username');
     let following = 0;
     let followers = 0;
@@ -267,26 +279,75 @@ function loadUserFeed() {
       let date = calcTime(chirpsResponse[i]._kmd.ect)
       chirpsResponse[i].date = date;
     }
-    
-    
+
+    //get user followers
+    await $.ajax({
+      method: 'GET',
+      url: BASE_URL + 'user/' + APP_KEY + '/' + `?query={"subscriptions":"${user}"}`,
+      headers: {
+        'Authorization': 'Kinvey ' + sessionStorage.getItem('authToken')
+      },
+
+    }).then(function (resp) {
+      followers = resp.length;
+
+
+    }).catch(function (resp) {
+      handleAjaxError(resp);
+    })
+
+    // get user following
+
+    await $.ajax({
+      method: 'GET',
+      url: BASE_URL + 'user/' + APP_KEY + '/' + sessionStorage.getItem('userId'),
+      headers: {
+        'Authorization': 'Kinvey ' + sessionStorage.getItem('authToken')
+      },
+
+    }).then(function (userdataResponse) {
+      following = userdataResponse.subscriptions.length
+
+    }).catch(function (userdataResponse) {
+      handleAjaxError(userdataResponse);
+    })
+
     let hasChirps = true;
 
     if (chirps !== 0) {
       hasChirps = false;
     }
-    containerFiller({ 
+    containerFiller({
       user,
       following,
       followers,
       chirps,
       hasChirps,
       chirpsResponse
-      
+
     }, './templates/myFeed.hbs', '#main');
 
-    console.log(chirpsResponse);
 
   }).catch(function (chirpsResponse) {
     handleAjaxError(chirpsResponse);
   })
+}
+
+function deleteChirp(event){
+
+let id = $(event.target).attr('data-id');
+
+  $.ajax({
+    method: 'DELETE',
+    url: BASE_URL + 'appdata/' + APP_KEY + '/chirps/' + id,
+    headers: {
+      'Authorization': 'Kinvey ' + sessionStorage.getItem('authToken')
+    }
+  }).then(function (response) {
+    infoBoxLoader('Chirp deleted');
+    loadUserFeed();
+  }).catch(function (response) {
+    handleAjaxError(response);
+  })
+
 }

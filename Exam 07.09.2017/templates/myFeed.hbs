@@ -31,7 +31,7 @@
             <article class="chirp">
                 <div class="titlebar">
                     <a class="chirp-author">{{author}}</a>
-                    <span class="chirp-time"> <a href="#" data=id="{{_id}}">delete</a> {{date}}</span>
+                    <span class="chirp-time"> <a href="#" data-id="{{_id}}" onclick="deleteChirp(event)">delete </a>| {{date}}</span>
                 </div>
                 <p>{{text}}</p>
             </article>
