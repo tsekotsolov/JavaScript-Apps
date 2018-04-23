@@ -1,33 +1,37 @@
-
-{{>headerpartial}} 
-{{>menupartial}}
+ {{>headerpartial}} {{>menupartial}}
 
 <section id="viewProfile">
-        <div class="content">
-            <div class="chirper">
+    <div class="content">
+        <div class="chirper">
 
-                <h2 class="titlebar">{{name}}</h2>
+            <h2 class="titlebar">{{name}}</h2>
 
-                <a id="btnFollow" class="chirp-author" href="#">Follow</a>
+            {{#if follow}}
+            <a id="btnFollow" class="chirp-author" href="#" data-id="{{name}}" onclick="follow(event)">Follow</a>
+            {{else}}
+            <a id="btnFollow" class="chirp-author" href="#" data-id="{{name}}" onclick="follow(event)">Unfollow</a>
+            {{/if}}
+            <div id="userProfileStats" class="user-details">
 
-                <div id="userProfileStats" class="user-details">
-                  
-                    <span>{{chirps}} chirps</span> | <span>{{following}} following</span> | <span>{{followers}} followers</span>
+                <span>{{chirps}} chirps</span> |
+                <span>{{following}} following</span> |
+                <span>{{followers}} followers</span>
 
-                </div>
-            </div>
-            <div id="profileChirps" class="chirps"><h2 class="titlebar">Chirps</h2>
-                
-                {{#each response}}
-                <article class="chirp">
-                    <div class="titlebar">
-                        <a href="#" class="chirp-author">{{author}}</a>
-                        <span class="chirp-time">{{date}}</span>
-                    </div>
-                    <p>{{text}}</p>
-                </article>
-                {{/each}}
             </div>
         </div>
-    </section>
-    {{>footerpartial}}
+        <div id="profileChirps" class="chirps">
+            <h2 class="titlebar">Chirps</h2>
+
+            {{#each response}}
+            <article class="chirp">
+                <div class="titlebar">
+                    <a href="#" class="chirp-author">{{author}}</a>
+                    <span class="chirp-time">{{date}}</span>
+                </div>
+                <p>{{text}}</p>
+            </article>
+            {{/each}}
+        </div>
+    </div>
+</section>
+{{>footerpartial}}

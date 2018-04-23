@@ -379,7 +379,7 @@ function loadDiscover() {
 
       }).then(function (resp) {
 
-        
+
         response[i].followers = resp.length;
         if (response[i].username === sessionStorage.getItem('username')) {
           delete(response[i]);
@@ -419,7 +419,7 @@ function loadOtherUserFeed(event) {
 
     let chirps = response.length;
     let followers = 0;
-    let following=0;
+    let following = 0;
 
     for (let i = 0; i < response.length; i++) {
 
@@ -435,9 +435,9 @@ function loadOtherUserFeed(event) {
         'Authorization': 'Kinvey ' + sessionStorage.getItem('authToken')
       },
 
-    }).then(function(resp){
-        
-        followers=resp.length
+    }).then(function (resp) {
+
+      followers = resp.length
     }).catch(function (resp) {
       handleAjaxError(resp);
     })
@@ -449,34 +449,84 @@ function loadOtherUserFeed(event) {
       headers: {
         'Authorization': 'Kinvey ' + sessionStorage.getItem('authToken')
       },
-  
-    }).then(function(currentUserResponse){
-      
-      if(currentUserResponse[0].subscriptions[0]==''){
-        following=currentUserResponse[0].subscriptions.length-1;
-      }else{
-        following=currentUserResponse[0].subscriptions.length
+
+    }).then(function (currentUserResponse) {
+
+      if (currentUserResponse[0].subscriptions[0] == '') {
+        following = currentUserResponse[0].subscriptions.length - 1;
+      } else {
+        following = currentUserResponse[0].subscriptions.length
       }
-      
+
     }).catch(function (resp) {
       handleAjaxError(resp);
     })
+
+    let subscriptions = JSON.parse(sessionStorage.getItem('subscriptions'));
+
+    let follow = true;
+    if (subscriptions.includes(name)) {
+      follow = false;
+    }
 
     containerFiller({
       name,
       response,
       chirps,
       followers,
-      following
-
+      following,
+      follow
     }, './templates/otherUserFeed.hbs', '#main');
 
   }).catch(function (response) {
     handleAjaxError(response);
   })
 
+}
 
+async  function follow(event) {
 
+  let personToFollowOrUnfollow = $(event.target).attr('data-id')
 
+  let subscriptions = JSON.parse(sessionStorage.getItem('subscriptions'));
+
+  let subscribed = true;
+
+  if (subscriptions.includes(personToFollowOrUnfollow)) {
+
+    const index = subscriptions.indexOf(personToFollowOrUnfollow);
+    subscriptions.splice(index, 1)
+    subscribed=false
+
+  } else {
+    subscriptions.push(personToFollowOrUnfollow);
+  }
+
+  sessionStorage.setItem('subscriptions', JSON.stringify(subscriptions));
+
+  await $.ajax({
+    method: 'PUT',
+    url: BASE_URL + 'user/' + APP_KEY + '/' + sessionStorage.getItem('userId'),
+    headers: {
+      'Authorization': 'Kinvey ' + sessionStorage.getItem('authToken')
+    },
+    data: {
+      subscriptions
+    }
+  }).then(function(response){
+
+    if(subscribed){
+      infoBoxLoader(`Subscribed to ${personToFollowOrUnfollow}`)
+    }
+    else{
+      infoBoxLoader(`Unsubscribed to ${personToFollowOrUnfollow}`)
+    }
+
+    
+  }).catch(function (resp) {
+      handleAjaxError(resp);
+    })
+
+  loadOtherUserFeed(event);
 
 }
