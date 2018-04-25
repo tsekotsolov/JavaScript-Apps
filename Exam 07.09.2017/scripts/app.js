@@ -366,30 +366,27 @@ function loadDiscover() {
 
   }).then(async function (response) {
 
+    let allSubcriptionsArray = []
+    for (let i = 0; i < response.length; i++) {
+
+      let user = response[i].username;
+
+      for (let j = 0; j < response[i].subscriptions.length; j++) {
+        allSubcriptionsArray.push((response[i].subscriptions[j]));
+      }
+    }
 
     for (let i = 0; i < response.length; i++) {
 
-      let user = response[i].username
-      await $.ajax({
-        method: 'GET',
-        url: BASE_URL + 'user/' + APP_KEY + '/' + `?query={"subscriptions":"${user}"}`,
-        headers: {
-          'Authorization': 'Kinvey ' + sessionStorage.getItem('authToken')
-        },
-
-      }).then(function (resp) {
-
-
-        response[i].followers = resp.length;
-        if (response[i].username === sessionStorage.getItem('username')) {
-          delete(response[i]);
+      let count = 0
+      for (let j = 0; j < allSubcriptionsArray.length; j++) {
+        if (allSubcriptionsArray[j] === response[i].username) {
+          count++
         }
+      }
 
-      }).catch(function (resp) {
-        handleAjaxError(resp);
-      })
+      response[i].followers = count;
     }
-
 
     containerFiller({
       response
@@ -398,9 +395,6 @@ function loadDiscover() {
   }).catch(function (resp) {
     handleAjaxError(resp);
   })
-
-
-
 
 }
 
@@ -484,7 +478,7 @@ function loadOtherUserFeed(event) {
 
 }
 
-async  function follow(event) {
+async function follow(event) {
 
   let personToFollowOrUnfollow = $(event.target).attr('data-id')
 
@@ -496,7 +490,7 @@ async  function follow(event) {
 
     const index = subscriptions.indexOf(personToFollowOrUnfollow);
     subscriptions.splice(index, 1)
-    subscribed=false
+    subscribed = false
 
   } else {
     subscriptions.push(personToFollowOrUnfollow);
@@ -513,19 +507,18 @@ async  function follow(event) {
     data: {
       subscriptions
     }
-  }).then(function(response){
+  }).then(function (response) {
 
-    if(subscribed){
+    if (subscribed) {
       infoBoxLoader(`Subscribed to ${personToFollowOrUnfollow}`)
-    }
-    else{
+    } else {
       infoBoxLoader(`Unsubscribed to ${personToFollowOrUnfollow}`)
     }
 
-    
+
   }).catch(function (resp) {
-      handleAjaxError(resp);
-    })
+    handleAjaxError(resp);
+  })
 
   loadOtherUserFeed(event);
 
