@@ -374,8 +374,12 @@ function loadDiscover() {
       for (let j = 0; j < response[i].subscriptions.length; j++) {
         allSubcriptionsArray.push((response[i].subscriptions[j]));
       }
-    }
 
+      if(user === sessionStorage.getItem('username')){
+        response.splice(i, 1);
+      }
+    }
+    
     for (let i = 0; i < response.length; i++) {
 
       let count = 0
