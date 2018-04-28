@@ -5,6 +5,8 @@ const AUTH_HEADERS = {
   'Authorization': "Basic " + btoa(APP_KEY + ":" + APP_SECRET)
 }
 
+// contentType: 'application/json';
+
 
 function registerUser(event) {
   event.preventDefault();
