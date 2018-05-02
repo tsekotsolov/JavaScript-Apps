@@ -350,7 +350,8 @@ function loadUserReceipts(event) {
                 
             }
             else{
-                infoBoxLoader('No checked out receipts')
+                errorBoxLoader('No checked out receipts')
+                
             }
 
         })
