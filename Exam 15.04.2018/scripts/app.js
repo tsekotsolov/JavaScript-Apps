@@ -335,18 +335,24 @@ function loadUserReceipts(event) {
             }
         }).then(function (response) {
 
-            for (let i = 0; i < response.length; i++) {
-                response[i].date = (response[i]._kmd.lmt).split('T')[0];
-                response[i].time = ((response[i]._kmd.lmt).split('T')[1]).substring(0, 5);
-                response[i].total = (Number(response[i].total)).toFixed(2);
+            if(response.length!==0){
+                for (let i = 0; i < response.length; i++) {
+                    response[i].date = (response[i]._kmd.lmt).split('T')[0];
+                    response[i].time = ((response[i]._kmd.lmt).split('T')[1]).substring(0, 5);
+                    response[i].total = (Number(response[i].total)).toFixed(2);
+                }
+    
+                let content = {
+                    data: response,
+                    user: response[0].author
+                }
+                containerFiller(content, './templates/all-receipt-view.hbs', '#container')
+                
+            }
+            else{
+                infoBoxLoader('No checked out receipts')
             }
 
-            let content = {
-                data: response,
-                user: response[0].author
-            }
-
-            containerFiller(content, './templates/all-receipt-view.hbs', '#container')
         })
         .catch(function (resp) {
             handleAjaxError(resp)

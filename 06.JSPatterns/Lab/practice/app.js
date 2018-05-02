@@ -1,9 +1,11 @@
+import { Handlebars } from "sammy";
+
 $(() => {
 
   const app = Sammy('#main', function () {
     this.use('Handlebars','hbs');
 
-    this.get('/index.html', (ctx) => {
+    this.get('#/index.html', (ctx) => {
       ctx.swap('<h1>Hello from Sammy.js</h1>')
     });
 
@@ -26,11 +28,12 @@ Pass: <input name="pass" type="password">
 <input type="submit" value="Login">
 </form>`)
     })
-    this.post('/login', (ctx) => {
+    this.post('#/login', (ctx) => {
+      console.log(ctx.params);
       console.log(ctx.params.user);
       console.log(ctx.params.pass);
     })
   });
-
+  
   app.run();
 })

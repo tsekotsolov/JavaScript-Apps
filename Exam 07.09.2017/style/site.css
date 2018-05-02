@@ -4,6 +4,8 @@
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
+
+
 header, footer {
     text-align: center;
     background: #cfcfcf;
@@ -182,4 +184,25 @@ header>*, footer>* {
 .form>input[type="submit"]:hover {
     background: #83bef7;
     cursor: pointer;
+}
+
+.spinner:before {
+    content: "";
+    box-sizing:border-box;
+    position:absolute;
+    top:50%;
+    left:50%;
+    height:60px;
+    width:60px;
+    margin-top:-60px;
+    margin-left:-60px;
+    border-radius:50%;
+    border:7px solid lightgray;
+    border-top-color: #b1d6fa;
+    animation:spinner 0.9s linear infinite;
+}
+@keyframes spinner {
+    to{
+        transform:rotate(360deg);
+    }
 }

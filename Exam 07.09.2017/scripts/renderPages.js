@@ -54,11 +54,13 @@ function handleAjaxError(response) {
 
 $(document).on({
   ajaxStart: async function () {
-    $("#loadingBox").show()
+    //$("#loadingBox").show()
+    $('.spinner').show()
 
   },
   ajaxStop: function () {
-    $("#loadingBox").hide()
+    //$("#loadingBox").hide()
+    $('.spinner').hide()
   }
 })
 
