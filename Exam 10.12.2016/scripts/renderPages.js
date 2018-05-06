@@ -48,12 +48,4 @@ function loadHomePage() {
   containerFiller(context, './templates/homePage.hbs', 'main');
 }
 
-function infoBoxLoader(message) {
-  let infobox = $('#infoBox')
-  $('#infoBox').text(message);
-  infobox.css('display', 'block');
-  setTimeout(function () {
-    infobox.css('display', 'none')
-  }, 3000)
-}
 

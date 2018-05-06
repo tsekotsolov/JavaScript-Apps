@@ -24,12 +24,12 @@ function registerUser(event) {
   }).then(function (response) {
 
     signInUser(response);
-    infoBoxLoader('User registration successful');
+    helper.infoBoxLoader('User registration successful');
     $('#formRegister').trigger('reset');
     loadHomePage();
 
   }).catch(function (response) {
-    handleAjaxError(response);
+    helper.handleAjaxError(response);
     $('#formRegister').trigger('reset');
   })
 
@@ -42,7 +42,7 @@ function loginUser(event) {
 
 
   if (username === '' || password === '') {
-    errorBoxLoader('Username or password can not be empty');
+    helper.errorBoxLoader('Username or password can not be empty');
     return;
   }
   $.ajax({
@@ -56,7 +56,7 @@ function loginUser(event) {
   }).then(function (response) {
 
     signInUser(response);
-    infoBoxLoader('Login successful');
+    helper.infoBoxLoader('Login successful');
     $('#formLogin').trigger('reset');
     loadHomePage();
 
@@ -64,7 +64,7 @@ function loginUser(event) {
   }).catch(function (response) {
     $('#formLogin').trigger('reset');
 
-    handleAjaxError(response);
+    helper.handleAjaxError(response);
 
   })
 }
@@ -89,11 +89,11 @@ function logoutUser() {
   }).then(async function () {
     await sessionStorage.clear();
     loadWelcomePage();
-    infoBoxLoader('Logout Success')
+    helper.infoBoxLoader('Logout Success')
 
 
   }).catch(function (response) {
-    handleAjaxError(response);
+    helper.handleAjaxError(response);
   });
 
 }
@@ -110,13 +110,13 @@ function sendMessage() {
   }).then(function (response) {
 
     let context = {
-      data: response
+      data: response.filter(e => e.username !==sessionStorage.getItem('username'))
     }
 
     containerFiller(context, './templates/sendMessage.hbs', 'main');
 
   }).catch(function (resp) {
-    handleAjaxError(resp);
+    helper.handleAjaxError(resp);
   })
 
 }
@@ -126,13 +126,13 @@ function sendMessageToDataBase(event) {
   event.preventDefault();
 
   let recipient_username = $('#formSendMessage').find(":selected").attr('value');
-  let text = escapeHtml($('#formSendMessage').find('input[name="text"]').val());
+  let text = helper.escapeHtml($('#formSendMessage').find('input[name="text"]').val());
 
   let sender_username = sessionStorage.getItem('username');
   let sender_name = sessionStorage.getItem('name');
 
   if (text === '') {
-    errorBoxLoader('Message can not be empty');
+    helper.errorBoxLoader('Message can not be empty');
     return;
   }
 
@@ -151,16 +151,14 @@ function sendMessageToDataBase(event) {
       }
     }).then(function (response) {
 
-      infoBoxLoader('Message sent');
+      helper.infoBoxLoader('Message sent');
       $('#formSendMessage').trigger('reset');
       archive();
 
     })
     .catch(function (response) {
-      handleAjaxError(response)
+      helper.handleAjaxError(response)
     });
-
-
 
 }
 
@@ -177,7 +175,7 @@ function archive() {
 
       for (let i = 0; i < response.length; i++) {
 
-        response[i].date = formatDate(response[i]._kmd.lmt);
+        response[i].date = helper.formatDate(response[i]._kmd.lmt);
 
       }
 
@@ -189,7 +187,7 @@ function archive() {
 
     })
     .catch(function (response) {
-      handleAjaxError(response)
+      helper.handleAjaxError(response)
     });
 }
 
@@ -204,12 +202,12 @@ function deleteMessage(event) {
       'Authorization': 'Kinvey ' + sessionStorage.getItem('authToken')
     }
   }).then(function (response) {
-    infoBoxLoader('Message deleted');
+    helper.infoBoxLoader('Message deleted');
     archive();
 
 
   }).catch(function (response) {
-    handleAjaxError(response);
+    helper.handleAjaxError(response);
   })
 
 }
@@ -227,8 +225,8 @@ function myMessages() {
 
       for (let i = 0; i < response.length; i++) {
 
-        response[i].date = formatDate(response[i]._kmd.lmt);
-        response[i].name = formatSender(response[i].sender_name, response[i].sender_username)
+        response[i].date = helper.formatDate(response[i]._kmd.lmt);
+        response[i].name = helper.formatSender(response[i].sender_name, response[i].sender_username)
 
       }
 
@@ -240,6 +238,6 @@ function myMessages() {
 
     })
     .catch(function (response) {
-      handleAjaxError(response)
+      helper.handleAjaxError(response)
     });
 }
