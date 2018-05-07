@@ -21,12 +21,12 @@ function registerUser(event) {
       password,
       name
     }
-  }).then(function (response) {
+  }).then(async function (response) {
 
     signInUser(response);
-    helper.infoBoxLoader('User registration successful');
     $('#formRegister').trigger('reset');
-    loadHomePage();
+    await loadHomePage();
+    helper.infoBoxLoader('User registration successful');
 
   }).catch(function (response) {
     helper.handleAjaxError(response);
@@ -53,13 +53,12 @@ function loginUser(event) {
       username,
       password
     }
-  }).then(function (response) {
+  }).then(async function (response) {
 
     signInUser(response);
-    helper.infoBoxLoader('Login successful');
     $('#formLogin').trigger('reset');
-    loadHomePage();
-
+    await loadHomePage();
+    helper.infoBoxLoader('Login successful');
 
   }).catch(function (response) {
     $('#formLogin').trigger('reset');
@@ -87,8 +86,8 @@ function logoutUser() {
     },
 
   }).then(async function () {
-    await sessionStorage.clear();
-    loadWelcomePage();
+   await sessionStorage.clear();
+   await loadWelcomePage();
     helper.infoBoxLoader('Logout Success')
 
 

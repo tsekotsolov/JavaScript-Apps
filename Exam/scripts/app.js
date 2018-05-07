@@ -14,7 +14,7 @@ function registerUser(event) {
   let username = $('#formRegister').find('input[name="username"]').val();
   let password = $('#formRegister').find('input[name="password"]').val();
   let confirmPassword = $('#formRegister').find('input[name="repeatPass"]').val();
-  
+
 
   const usernameRegex = /^.{5,}$/g;
 
@@ -41,16 +41,17 @@ function registerUser(event) {
     data: {
       username,
       password,
-      subscriptions
+      name
     }
-  }).then(function (response) {
+  }).then(async function (response) {
 
     signInUser(response);
-    infoBoxLoader('Registration Success');
     $('#formRegister').trigger('reset');
+    await loadHomePage();
+    helper.infoBoxLoader('User registration successful');
 
   }).catch(function (response) {
-    handleAjaxError(response);
+    helper.handleAjaxError(response);
     $('#formRegister').trigger('reset');
   })
 
@@ -74,17 +75,17 @@ function loginUser(event) {
       username,
       password
     }
-  }).then(function (response) {
+  }).then(async function (response) {
 
     signInUser(response);
-    infoBoxLoader('Login Success');
     $('#formLogin').trigger('reset');
-   
+    await loadHomePage();
+    helper.infoBoxLoader('Login successful');
 
   }).catch(function (response) {
     $('#formLogin').trigger('reset');
 
-    handleAjaxError(response);
+    helper.handleAjaxError(response);
 
   })
 }
@@ -105,13 +106,14 @@ function logoutUser() {
       'Authorization': 'Kinvey ' + sessionStorage.getItem('authToken')
     },
 
-  }).then(function () {
-    sessionStorage.clear();
-    infoBoxLoader('Logout Success')
-    
+  }).then(async function () {
+    await sessionStorage.clear();
+    await loadWelcomePage();
+    helper.infoBoxLoader('Logout Success')
+
+
   }).catch(function (response) {
-    handleAjaxError(response);
+    helper.handleAjaxError(response);
   });
 
 }
-

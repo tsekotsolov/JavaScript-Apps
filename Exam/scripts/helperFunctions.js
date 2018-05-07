@@ -1,3 +1,4 @@
+
 let helper = (function () {
 
   function infoBoxLoader(message) {

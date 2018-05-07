@@ -13,12 +13,12 @@ function loadHeader() {
   containerFiller(context, './templates/header.hbs', '#menu');
 }
 
-function loadWelcomePage() {
+async function loadWelcomePage() {
   loadHeader();
   let context = {
     userIsLogged: sessionStorage.getItem('authToken') !== null,
   }
-  containerFiller(context, './templates/welcome-page.hbs', 'main');
+  await containerFiller(context, './templates/welcome-page.hbs', 'main');
 }
 
 function loadRegisterPage() {
@@ -38,14 +38,14 @@ function loadLoginPage() {
   containerFiller(context, './templates/login-page.hbs', 'main');
 };
 
-function loadHomePage() {
+async function loadHomePage() {
 
   loadHeader();
   let context = {
 
     user: sessionStorage.getItem('username')
   }
-  containerFiller(context, './templates/homePage.hbs', 'main');
+  await containerFiller(context, './templates/homePage.hbs', 'main');
 }
 
 
