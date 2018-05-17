@@ -291,7 +291,7 @@ function deleteFlight(event) {
 
 }
 
-async function loadEditFlightView(event) {
+function loadEditFlightView(event) {
 
   let id = $(event.target).attr('data-id');
 
