@@ -2,18 +2,18 @@
     <div class="left-container">
         <ul>
             {{#if userIsLogged}}
-            <li>
-                <a href="#" onclick="loadHomePage()">Home</a>
+            <li onclick="loadHomePage()">
+                <a href="#">Home</a>
             </li>
-            <li>
-                <a href="#" onclick="loadMyFlights()">Flights</a>
+            <li onclick="loadMyFlights()">
+                <a href="#">Flights</a>
             </li>
             {{else}}
-            <li>
-                <a href="#" onclick="loadLoginPage()">Login</a>
+            <li onclick="loadLoginPage()">
+                <a href="#">Login</a>
             </li>
-            <li>
-                <a href="#" onclick="loadRegisterPage()">Register</a>
+            <li onclick="loadRegisterPage()">
+                <a href="#">Register</a>
             </li>
             {{/if}}
         </ul>
