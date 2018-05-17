@@ -10,7 +10,7 @@ function loadRegisterPage() {
   let context = {
     userIsLogged: sessionStorage.getItem('authToken') !== null,
   }
-  containerFiller(context, './templates/register-page.hbs', '#main');
+  containerFiller(context, './templates/register-page.hbs', '#container');
 };
 
 function loadLoginPage() {
@@ -18,8 +18,16 @@ function loadLoginPage() {
   let context = {
     userIsLogged: sessionStorage.getItem('authToken') !== null,
   }
-  containerFiller(context, './templates/login-page.hbs', '#main');
+  containerFiller(context, './templates/login-page.hbs', '#container');
 };
 
+function addFlightView() {
+
+  let context = {
+    userIsLogged: sessionStorage.getItem('authToken') !== null,
+    username: sessionStorage.getItem('username'),
+  }
+  containerFiller(context, './templates/add-flight.hbs', '#container');
+}
 
 

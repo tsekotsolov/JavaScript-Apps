@@ -1,0 +1,28 @@
+
+{{>menupartial}}
+ <section id="viewMyFlights">
+            <h3>Your Flights</h3>
+            {{#each data}}
+            <div class="flight-ticket">
+                <div class="flight-left">
+                    <img src="{{image}}"alt="">
+                </div>
+                <div class="flight-right">
+                    <div>
+                        <h3>{{destination}}</h3>
+                        <span>{{date}}</span>
+                    </div>
+                    <div>
+                        from {{origin}}
+                        <span>{{time}}</span>
+                    </div>
+                    <p>{{seats}} Seats ({{cost}}$ per seat) </p>
+                    <a href="#" class="remove" data-id="{{_id}}" onclick="deleteFlight(event)">REMOVE</a>
+                    <a href="#" class="details" data-id="{{_id}}" onclick="flightDetails(event)">Details</a>
+                </div>
+
+            </div>
+           {{/each}}
+        </section>
+
+        {{>footerpartial}}

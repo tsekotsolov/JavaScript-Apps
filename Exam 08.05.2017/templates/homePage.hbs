@@ -1,0 +1,19 @@
+ {{>menupartial}}
+
+<section id="viewCatalog" class="background-img">
+    <a href="#" class="add-flight" onclick="addFlightView()">Add Flight +</a>
+
+    <div class="added-flights">
+
+        {{#each data}}
+        <a href="#" class="added-flight" data-id="{{_id}}" onclick="flightDetails(event)">
+            <img src="{{image}}" alt="" class="picture-added-flight" data-id="{{_id}}">
+            <h3 data-id="{{_id}}">{{destination}}</h3>
+            <span data-id="{{_id}}">{{origin}}</span>
+            <span data-id="{{_id}}">{{departure}}</span>
+        </a>
+        {{/each}}
+
+    </div>
+</section>
+{{>footerpartial}}

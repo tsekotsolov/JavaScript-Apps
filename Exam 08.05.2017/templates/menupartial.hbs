@@ -1,0 +1,28 @@
+<nav>
+    <div class="left-container">
+        <ul>
+            {{#if userIsLogged}}
+            <li>
+                <a href="#" onclick="loadHomePage()">Home</a>
+            </li>
+            <li>
+                <a href="#" onclick="loadMyFlights()">Flights</a>
+            </li>
+            {{else}}
+            <li>
+                <a href="#" onclick="loadLoginPage()">Login</a>
+            </li>
+            <li>
+                <a href="#" onclick="loadRegisterPage()">Register</a>
+            </li>
+            {{/if}}
+        </ul>
+    </div>
+
+    <div class="right-container">
+        {{#if userIsLogged}}
+        <span>Welcome, {{username}} |</span>
+        <a href="#" class="log-out" onclick="logoutUser()">Logout</a>
+        {{/if}}
+    </div>
+</nav>
